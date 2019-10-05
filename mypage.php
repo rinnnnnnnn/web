@@ -89,10 +89,7 @@ p{
 </div>
 
 <?php
-$dsn = 'mysql:dbname=tb210282db; host=localhost';
-$user = 'tb-210282';
-$password = 'BGHZyT7Gvh';
-$pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
+//データベースとの接続
 
 if (!session_id()) {
     session_start();
