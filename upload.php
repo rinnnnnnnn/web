@@ -116,10 +116,7 @@ function upload_file($files, $path = "./upload",$imagesExt=['jpg','png','jpeg','
         else{
             echo "文件上传成功！";
 
-            $dsn = 'mysql:dbname=tb210282db; host=localhost';
-            $user = 'tb-210282';
-            $password = 'BGHZyT7Gvh';
-            $pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
+//データベースとの接続
 
             $sql = "CREATE TABLE IF NOT EXISTS upload
              (
