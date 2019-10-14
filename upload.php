@@ -1,40 +1,50 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>マイページ</title>
 <meta charset="UTF-8">
 <style type="text/css">
-body{background-color: #FFF0F5; margin: 0; padding: 0}
 *{padding:0;margin:0;}
-body{background-color: #FFF0F5; margin: 0; padding: 0}
-.left{
-    width:200px;
+html{
     height: 100%;
+    width: 100%;
+
+}
+body{
+    height: 100%;
+    width: 100%;
+}
+.left{
+    width: 200px;
     background-color: #FFFFFF;
+    display: block;
 }
 .right{
     position: absolute;
-    top:0;
+    float: right;
     left: 200px;
-    right: 0;
-    background-color: #FFF0F5;
+    top:0;
+    width: 84%;
     height: 100%;
+    background-color: #FFF0F5;
+    display: block;
 }
 .headline{
     background-color: #FFFFFF; 
     height: 54px; 
     margin: 0; 
     border: 0;
-    padding-top: 20px}
-.button{width: 100px; 
-        height: 40px; 
-        font-size: 20px; 
-        font:"ＭＳ 明朝"; 
-        border:0.5px; 
-        margin-right:30px; 
-        background-color: #FFFFFF;
-        word-spacing: 1em;}
-
-
+    padding-top: 20px
+}
+.button{
+    width: 100px; 
+    height: 40px; 
+    font-size: 20px; 
+    font:"ＭＳ 明朝"; 
+    border:0.5px; 
+    margin-right:30px; 
+    background-color: #FFFFFF;
+    word-spacing: 1em;}
 }
 .main {
     -moz-column-count: 4;
@@ -49,8 +59,8 @@ body{background-color: #FFF0F5; margin: 0; padding: 0}
 }
 
 .box {
-float: left;
-padding: 15px 0 0 15px;
+    float: left;
+    padding: 15px 0 0 15px;
 }
 .pic {
     width: 220px;
@@ -64,15 +74,19 @@ padding: 15px 0 0 15px;
     -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
     -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
-
+}
 .box .pic img {
-display: block;
-width: 100%;
+    display: block;
+    width: 100%;
+}
+.box .pic video {
+    display: block;
+    width: 100%;
 }
 p{
-    margin: 0,5px,0,5px;
+    text-indent:5px;
+    font-size: 14px;
 }
-
 </style>
 </head>
 <body>
@@ -111,12 +125,15 @@ function upload_file($files, $path = "./upload",$imagesExt=['jpg','png','jpeg','
         $destname = $path."/".$filename;// 将文件名拼接到指定的目录下
         // 进行文件移动
         if (!move_uploaded_file($files['tmp_name'],$destname)){
-            return "文件上传失败！";
+            return "アップロード失敗しました！";
         }
         else{
-            echo "文件上传成功！";
+            echo "<script> alert('アップロード成功しました！');parent.location.href='mypage.php';</script>";
 
-//データベースとの接続
+            $dsn = 'mysql:dbname=tb210282db; host=localhost';
+            $user = 'tb-210282';
+            $password = 'BGHZyT7Gvh';
+            $pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
             $sql = "CREATE TABLE IF NOT EXISTS upload
              (
@@ -151,11 +168,23 @@ upload_file($upfile);
 <form action='upload.php' method=post enctype="multipart/form-data">
     
     <!-- 上传文件限制,会在传递至index.php之前先执行验证文件大小，value为上传文件的最大值 ，单位为b，600000为600kb-->
-    <input type="hidden" name="MAX_FILE_SIZE" value="1000000">
-    <input type = "text" name="comment"></br>
-    <input type="file" name="upfile">
+    <input type="hidden" name="MAX_FILE_SIZE" value="100000000">
+    <div align="center" style="height: 200px">
+    <table>
+    <tr>
+        <td>コメント：</td>
+        <td><input type = "text" name="comment" style = "margin: 30px; height: 30px; width: 300px"></td>
+    </tr>
+    <tr>
+        <td>画像や動画：</td>
+        <td><input type="file" name="upfile" style = "margin: 30px; height: 30px; width: 300px"></td>
+    </tr>
+    <tr align="center">
+        <td colspan="2"><input type="submit" value="アップロード" align="center" style = "width:100px; height: 30px"> </td>     
+    </tr>  
+    </table>
+    </div>
 
-    <input type="submit" value='上传文件'>
 
 </form>
 

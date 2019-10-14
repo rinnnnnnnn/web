@@ -1,76 +1,87 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>未定</title>
+<title>Take a Photo</title>
 <meta charset="UTF-8">
+
 <style type="text/css">
 *{padding:0;margin:0;}
-html,body{background-color: #FFF0F5; margin: 0; padding: 0; height: 100%;}
-.left{
-    width:200px;
+html{
     height: 100%;
+    width: 100%;
+}
+body{
+    height: 100%;
+    width: 100%;
+}
+.left{
+    width: 200px;
     background-color: #FFFFFF;
+    display: block;
 }
 .right{
     position: absolute;
-    top:0;
+    float: right;
     left: 200px;
-    right: 0;
+    width: 1000px;
+    top:0;
     background-color: #FFF0F5;
-    height: 100%;
+    display: block;
+    min-height: 100%;
 }
 .headline{
+    position: absolute;
+    display: block;
+    width: 1000px;
     background-color: #FFFFFF; 
     height: 54px; 
     margin: 0; 
     border: 0;
-    padding-top: 20px}
-.button{width: 100px; 
-		height: 40px; 
-		font-size: 20px; 
-		font:"ＭＳ 明朝"; 
-		border:0.5px; 
-		margin-right:30px; 
-		background-color: #FFFFFF;
-		word-spacing: 1em;}
-
-
+    padding-top: 20px;
+    z-index: 9999;
 }
-.main {
-    -moz-column-count: 4;
-    -webkit-column-count: 4;
-    column-count: 4;
-    -moz-column-width: 220px;
-    -webkit-column-width: 220px;
-    column-width: 220px
-    -moz-column-gap: 10px;
-    -webkit-column-gap: 10px;
-    column-gap: 10px;
+.button{
+    width: 100px; 
+	height: 40px; 
+	font-size: 20px; 
+	font:"ＭＳ 明朝"; 
+	border:0.5px; 
+	margin-right:30px; 
+	background-color: #FFFFFF;
+	word-spacing: 1em;}
 }
 
-.box {
-float: left;
-padding: 15px 0 0 15px;
+#gallery-wrapper {
+  position: relative;
+  max-width: 100%;
+  width: 1000px;
+  top: 100px;
 }
-.pic {
-	width: 220px;
-    padding: 10px;
-    margin: 0 5px 5px;
-    -moz-page-break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    break-inside: avoid;
-    background: white;
-    box-sizing: border-box;
-    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
-    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+img.thumb {
+  width: 200px;
+}
+video.thumb {
+  width: 200px;
+}
+.white-panel {
+  position: absolute;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+  padding: 10px;
+  width: 200px;
+  margin: 10px;
+}
 
-.box .pic img {
-display: block;
-width: 100%;
-}
-p{
-    margin: 0,5px,0,5px;
-}
+.white-panel:hover {
+  box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
+  margin-top: -3px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}     
+        }
 </style>
 </head>
 <body>
@@ -89,11 +100,16 @@ p{
 <input class="button" name="newlogin" type="button" value="新規登録"  onclick="location.href='newlogin.html'" />
 </div>
 </div>
-<div style="height: 50px"></div>
-<div class="main" id="main">
+
+
+<div style="height: 10px"></div>
+<section id="gallery-wrapper">
 
 <?php
-//データベースとの接続
+$dsn = 'mysql:dbname=tb210282db; host=localhost';
+$user = 'tb-210282';
+$password = 'BGHZyT7Gvh';
+$pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
 $sql = "SELECT id FROM login";
 $stmt = $pdo->query($sql);
@@ -108,18 +124,48 @@ foreach ($results as $row){
 		$filename = $row['filename'];
 		$comment = $row['comment'];
         $username = $row['username'];
-		echo "<div class='box'>";
-		echo "<div class='pic'><img src='upload/".$filename."' width='100%'><br>".$comment."<br>by.".$username."</div>";
-		echo "</div>";
-   		
-//   		 echo "<hr>";
-    }
+
+        $type = substr(strrchr($filename, '.'), 1);
+
+        if($type == "mp4"){
+        echo "<article class='white-panel'>";
+        echo "<video width='220px' controls>";
+        echo "<source src='upload/".$filename."' type='video/mp4'>";
+        echo "<object data='movie.mp4' width='200px' class='thumb'>";
+        echo "</object></video><br>";
+        echo $comment."<br>by. ".$username;
+        echo "</article>";
+        }
+
+        else{
+        echo "<article class='white-panel'>";
+        echo "<img src='upload/".$filename."' width='200px' class='thumb'><br>";
+        echo $comment."<br>by. ".$username;
+        echo "</article>";
+        
+        }
 
     }
+    }
+?>        
 
-?>
+</session>
 </div>
-</div>
-
+    
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/pinterest_grid.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("#gallery-wrapper").pinterest_grid({
+                no_columns: 4,
+                padding_x: 10,
+                padding_y: 10,
+                margin_bottom: 50,
+                single_column_breakpoint: 700
+            });
+            
+        });
+    </script>
 </body>
+
 </html>

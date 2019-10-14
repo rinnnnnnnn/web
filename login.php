@@ -1,30 +1,41 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>マイページ</title>
 <meta charset="UTF-8">
 <style type="text/css">
 *{padding:0;margin:0;}
-html,body{background-color: #FFF0F5; margin: 0; padding: 0; height: 100%;}
-.left{
-    width:200px;
+html{
     height: 100%;
+    width: 100%;
+
+}
+body{
+    height: 100%;
+    width: 100%;
+}
+.left{
+    width: 200px;
     background-color: #FFFFFF;
+    display: block;
 }
 .right{
     position: absolute;
-    top:0;
+    float: right;
     left: 200px;
-    right: 0;
+    top:0;
     background-color: #FFF0F5;
-    height: 100%;
+    display: block;
 }
 .headline{
     background-color: #FFFFFF; 
     height: 54px; 
     margin: 0; 
     border: 0;
-    padding-top: 20px}
-.button{width: 100px; 
+    padding-top: 20px
+}
+.button{
+    width: 100px; 
     height: 40px; 
     font-size: 20px; 
     font:"ＭＳ 明朝"; 
@@ -32,8 +43,6 @@ html,body{background-color: #FFF0F5; margin: 0; padding: 0; height: 100%;}
     margin-right:30px; 
     background-color: #FFFFFF;
     word-spacing: 1em;}
-
-
 }
 .main {
     -moz-column-count: 4;
@@ -48,11 +57,11 @@ html,body{background-color: #FFF0F5; margin: 0; padding: 0; height: 100%;}
 }
 
 .box {
-float: left;
-padding: 15px 0 0 15px;
+    float: left;
+    padding: 15px 0 0 15px;
 }
 .pic {
-  width: 220px;
+    width: 220px;
     padding: 10px;
     margin: 0 5px 5px;
     -moz-page-break-inside: avoid;
@@ -63,20 +72,28 @@ padding: 15px 0 0 15px;
     -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
     -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
-
+}
 .box .pic img {
-display: block;
-width: 100%;
+    display: block;
+    width: 100%;
+}
+.box .pic video {
+    display: block;
+    width: 100%;
 }
 p{
-    margin: 0,5px,0,5px;
+    text-indent:5px;
+    font-size: 14px;
 }
 </style>
 </head>
 <body>
 
 <?php
-//データベースとの接続
+$dsn = 'mysql:dbname=tb210282db; host=localhost';
+$user = 'tb-210282';
+$password = 'BGHZyT7Gvh';
+$pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
 if (isset($_POST["newlogin"])){
 	if($_POST["username"] == ""){
@@ -96,12 +113,12 @@ if (isset($_POST["newlogin"])){
           )";
     	    $stmt = $pdo->query($sql);
 
-    		  $un = $_POST["username"];
-    	  	$pw = $_POST["password"];
-    	  	$sql =  "INSERT INTO login(username,password) VALUES ('$un','$pw')";
+    		  $username = $_POST["username"];
+    	  	$password = $_POST["password"];
+    	  	$sql =  "INSERT INTO login(username,password) VALUES ('$username','$password')";
     	  	$stmt = $pdo->query($sql);
 
-      		$sql = "SELECT id FROM login WHERE username='$un'";
+      		$sql = "SELECT id FROM login WHERE username='$username'";
     			$stmt = $pdo->query($sql);
 
     			$results = $stmt->fetchall();
@@ -136,20 +153,46 @@ if (isset($_POST["login"])){
           $stmt = $pdo->query($sql);
           $results = $stmt->fetchall();
           foreach ($results as $row){
-            $un = $row['username'];
+            $username = $row['username'];
           }
   				echo "<script> alert('登録しました') </script>";
 
   			}
   			else{
-	  	    echo "正確なパスワードを入力してください";
+	  	    echo "<script>alert('正確なIDもしくはパスワードを入力してください');parent.location.href='index.php';</script>";
      		}
     	}
     }
 } 
+if (isset($_POST["findid"])){
+
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $sql = "SELECT password FROM login WHERE username='$username'";
+        $stmt = $pdo->query($sql);
+        $results = $stmt->fetchall();
+        foreach ($results as $row){
+          $pass = $row['password'];         
+        }
+        if ($password === $pass){
+          $sql = "SELECT id FROM login WHERE username='$username'";
+          $stmt = $pdo->query($sql);
+          $results = $stmt->fetchall();
+          foreach ($results as $row){
+            $userid = $row['id'];
+          }
+          echo "<script> alert('あなたのid番号は".$userid."です。忘れないでください') </script>";
+
+        }
+        else{
+          echo "<script>alert('正確なユーザ名もしくはパスワードを入力してください');parent.location.href='index.php';</script>";
+        }
+
+} 
+
     session_start();
     $_SESSION['userid']=$userid;
-    $_SESSION['username']=$un;
+    $_SESSION['username']=$username;
 
 ?>
 <div class="left">
@@ -178,18 +221,35 @@ $stmt = $pdo->query($sql);
 $results = $stmt->fetchAll();
 foreach ($results as $row){
     $id = $row['id'];
-    $sql = "SELECT comment,filename FROM upload WHERE userid='$id'";
+    $sql = "SELECT username,comment,filename FROM upload WHERE userid='$id'";
   $stmt = $pdo->query($sql);
   $results = $stmt->fetchAll();
   foreach ($results as $row){
     //$rowの中にはテーブルのカラム名が入る
     $filename = $row['filename'];
     $comment = $row['comment'];
-    echo "<div class='box'>";
-    echo "<div class='pic'><img src='upload/".$filename."' width='100%'><br>".$comment."</div>";
-    echo "</div>";
-      
-//       echo "<hr>";
+    $username = $row['username'];
+        
+        $type = substr(strrchr($filename, '.'), 1);
+
+        if($type == "mp4"){
+        echo "<div class='box'>";
+        echo "<div class='pic'>";
+        echo "<video width='220px' controls>";
+        echo "<source src='upload/".$filename."' type='video/mp4'>";
+        echo "<object data='movie.mp4' width='320'>";
+        echo "</object></video>";
+        echo $comment."<br>by. ".$username;
+        echo "</div>";
+        echo "</div>";
+
+        }
+        else{
+        echo "<div class='box'>";
+        echo "<div class='pic'><img src='upload/".$filename."' width='100%'><br>".$comment."<br>by. ".$username."</div>";
+        echo "</div>";
+        
+        }
     }
 
     }

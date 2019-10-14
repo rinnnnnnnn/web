@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>newlogin</title>
+<title>新規登録</title>
 <meta charset="UTF-8">
 <style type="text/css">
 body{background-color: #FFF0F5; margin: 0; padding: 0}
@@ -18,10 +19,11 @@ body{background-color: #FFF0F5; margin: 0; padding: 0}
 <body>
 <div class="headline">
 <div style="border:0; float: right">
-<input class="button" name="login" type="button" value="ログイン"  onclick="location.href='login.php'" />
-<input class="button" name="newlogin" type="button" value="新規登録"  onclick="location.href='newlogin.php'" />
+<input class="button" type="button" value="トップページ"  onclick="location.href='index.php'" />
+<input class="button" name="login" type="button" value="ログイン"  onclick="location.href='login.html'" />
 </div>
 </div>
+
 <div style="height: 50px"></div>
 <form action = "login.php" method = "POST">  
 <div align="center" style="height: 200px">
@@ -32,7 +34,7 @@ body{background-color: #FFF0F5; margin: 0; padding: 0}
 		</tr>
 		<tr>
 			<td>パスワード:</td>
-			<td><input type = "text" name="password" id="password" style = "margin: 30px; height: 30px; width: 300px"/></td>
+			<td><input type = "password" name="password" id="password" style = "margin: 30px; height: 30px; width: 300px"/></td>
 		</tr>
 		<tr align="center">
 			<td colspan="2"> <input type="submit" name="newlogin" value="新規登録" align="center" style = "width:100px; height: 30px"/></td>

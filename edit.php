@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>マイページ</title>
@@ -92,7 +93,10 @@ p{
 
 
 <?php
-//データベースとの接続
+$dsn = 'mysql:dbname=tb210282db; host=localhost';
+$user = 'tb-210282';
+$password = 'BGHZyT7Gvh';
+$pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
 if (!session_id()) {
     session_start();
@@ -108,18 +112,34 @@ if (isset($_POST["delete"])) {
     $stmt = $pdo->query($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
+    echo "<script>alert('削除しました！');parent.location.href='mypage.php';</script>";
   }
 
 if (isset($_POST["edit"])){
     echo"<form action='edit.php' method=post enctype='multipart/form-data'>";
     echo"<input type='hidden' name='MAX_FILE_SIZE' value='1000000000'>";
-    echo"<input type = 'text' name='comment'></br>";
-    echo"<input type='file' name='upfile'>";
-    echo"<input type='submit' name='upload' value='アップロード'>";
+    echo "<div align='center' style='height: 200px'>
+    <table>
+    <tr>
+        <td>コメント：</td>
+        <td><input type = 'text' name='comment' style = 'margin: 30px; height: 30px; width: 300px'></td>
+    </tr>
+    <tr>
+        <td>画像や動画：</td>
+        <td><input type='file' name='upfile' style = 'margin: 30px; height: 30px; width: 300px'></td>
+    </tr>
+    <tr align='center'>
+        <td colspan='2'><input type='submit' value='アップロード'' align='center' style = 'width:100px; height: 30px'> </td>     
+    </tr>  
+    </table>
+    </div>";
+
+    echo"<input type='hidden' name='num' value=".$_POST['num'].">";
     echo"</form>";
+}
     
-    if(!empty($_FILES['upfile'])){
-        echo "1";
+if(!empty($_FILES['upfile'])){
+
     $upfile = $_FILES['upfile'];
     function upload_file($files, $path = "./upload",$imagesExt=['jpg','png','jpeg','gif','mp4'])
     {
@@ -133,38 +153,26 @@ if (isset($_POST["edit"])){
         }
 
         // 判断是否存在上传到的目录
-
         if (!is_dir($path)){
-            mkdir($path,0777,true);
+            mkdir($path,0777,true);  
         }
-
-        // 生成唯一的文件名
-
-        $filename = md5(uniqid(microtime(true),true)).'.'.$ext;
-
-        // 将文件名拼接到指定的目录下
-
-        $destname = $path."/".$filename;
+        $filename = md5(uniqid(microtime(true),true)).'.'.$ext; // 生成唯一的文件名
+        $destname = $path."/".$filename; // 将文件名拼接到指定的目录下
 
         // 进行文件移动
-
         if (!move_uploaded_file($files['tmp_name'],$destname)){
-
-            return "文件上传失败！";
-
+            return "アップロード失敗しました";
         }
 
         else{
-            echo "文件上传成功！";
+            echo "<script> alert('アップロード成功しました！');parent.location.href='mypage.php';</script>";
             $dsn = 'mysql:dbname=tb210282db; host=localhost';
             $user = 'tb-210282';
             $password = 'BGHZyT7Gvh';
             $pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
             $comment = $_POST['comment'];
-            $num = $_POST["num"];
-            echo $num;
-            echo "?";
+            $num = $_POST['num'];
             $sql = "UPDATE upload SET comment='$comment',filename='$filename' WHERE num='$num'";
                 $stmt = $pdo->query($sql);
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -175,12 +183,7 @@ if (isset($_POST["edit"])){
 
     upload_file($upfile);
     }
-
-}
-
 ?>
-
-
 </div>
 </body>
 </html>
