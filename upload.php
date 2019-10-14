@@ -130,9 +130,9 @@ function upload_file($files, $path = "./upload",$imagesExt=['jpg','png','jpeg','
         else{
             echo "<script> alert('アップロード成功しました！');parent.location.href='mypage.php';</script>";
 
-            $dsn = 'mysql:dbname=tb210282db; host=localhost';
-            $user = 'tb-210282';
-            $password = 'BGHZyT7Gvh';
+            $dsn = '///////////';
+            $user = '//////////';
+            $password = '///////////';
             $pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
             $sql = "CREATE TABLE IF NOT EXISTS upload
